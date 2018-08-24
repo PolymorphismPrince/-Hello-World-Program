@@ -116,27 +116,3 @@ def test(function,inputs,outputs):
             score += 1
     return score / len(inputs) * 100
 
-AI = net([4,6,3],"Jill")
-data = pd.read_csv("/Users/adenpower/Documents/Personal/Repos/AI Tests/dataset1")
-
-data = data.values
-ins = data[0:,:4]
-expected = list(data[0:,4])
-
-
-
-def prep(expects):
-    if expects == "Iris-versicolor":
-        return [1,0,0]
-    elif expects == "Iris-virginica":
-        return [0,1,0]
-    else:
-        return [0,0,1]
-
-expected = list(map(prep,expected))
-
-print(test(AI.fire,ins,expected))
-
-print(AI.learn(ins,expected,2000,progress=True))
-
-print(test(AI.fire,ins,expected))
