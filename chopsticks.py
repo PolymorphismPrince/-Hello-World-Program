@@ -112,7 +112,7 @@ def test(function,inputs,outputs):
         result = function(inputs[i])
         onehot = [0,0,0]
         onehot[result.argmax()] = 1
-        if list(expected[i]) == list(onehot):
+        if list(outputs[i]) == list(onehot):
             score += 1
     return score / len(inputs) * 100
 
