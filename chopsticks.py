@@ -1,5 +1,6 @@
 import numpy as np
 import numpy.random as rand
+import random
 import matplotlib.pylab as plt
 import seaborn as sns
 import pandas as pd
@@ -47,23 +48,27 @@ class net:
             results.append(self.fire(np.array(input),True))
         return self.backprop(results,outputs)
     
-    def learn(self,inputs,outputs,epochs = 1,batch_size = "all"):
-        in_batches = np.array([])
-        out_batches = np.array([])
+    def learn(self,inputs,outputs,epochs = 1,batch_size = "all",progress = False):
+        in_batches = []
+        out_batches = []
         if batch_size != "all":
             for i in range(0,len(inputs),batch_size):
                 if i + batch_size <= len(inputs) - 1:
-                    in_batches = np.append(in_batches,np.array(inputs[i:i+batch_size - 1]))
-                    out_batches = np.append(out_batches,np.array(outputs[i:i+batch_size - 1]))
+                    in_batches.append(inputs[i:i+batch_size - 1])
+                    out_batches.append(outputs[i:i+batch_size - 1])
                 else:
-                    in_batches = np.append(in_batches,np.array(inputs[i:]))
-                    out_batches = np.append(out_batches,np.array(outputs[i:]))
+                    in_batches.append(inputs[i:])
+                    out_batches.append(outputs[i:])
         else:
-            np.append(in_batches,np.array(inputs))
-            np.append(out_batches,np.array(outputs))
+            in_batches.append(inputs)
+            out_batches.append(outputs)
         error = []
         for i in range(epochs):
-            error.append(self.epoch(rand.choice(in_batches),rand.choice(out_batches)))
+            error.append(self.epoch(random.choice(in_batches),random.choice(out_batches)))
+            if progress != False and i % 50 == 0:
+                 print("\r {} out of {} epochs".format(i,epochs),end="")
+        if progress != False:
+            print("\nTraining Complete")
         return error
 
     def backprop (self, ins, outs):
@@ -100,13 +105,26 @@ class net:
     def derive (self,x):
         return x/x
 
-"""
+
+def test(function,inputs,outputs):
+    score = 0
+    for i in range(len(inputs)):
+        result = function(inputs[i])
+        onehot = [0,0,0]
+        onehot[result.argmax()] = 1
+        if list(expected[i]) == list(onehot):
+            score += 1
+    return score / len(inputs) * 100
+
 AI = net([4,6,3],"Jill")
 data = pd.read_csv("/Users/adenpower/Documents/Personal/Repos/AI Tests/dataset1")
 
 data = data.values
 ins = data[0:,:4]
 expected = list(data[0:,4])
+
+
+
 def prep(expects):
     if expects == "Iris-versicolor":
         return [1,0,0]
@@ -117,6 +135,8 @@ def prep(expects):
 
 expected = list(map(prep,expected))
 
-AI.learn(ins,expected,100)
+print(test(AI.fire,ins,expected))
 
-"""
+print(AI.learn(ins,expected,2000,progress=True))
+
+print(test(AI.fire,ins,expected))
