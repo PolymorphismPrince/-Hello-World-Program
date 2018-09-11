@@ -1,13 +1,17 @@
 import numpy as np
 import numpy.random as rand
 import random
-import matplotlib.pylab as plt
+import matplotlib
+matplotlib.use("TkAgg")
+from matplotlib import pyplot as plt
 import seaborn as sns
 import pandas as pd
+import time
+import json
 alphabet = "abcdefghijklmnopqrstuvwxyz"
 
 class net:
-    learning_rate = 0.003
+    learning_rate = 0.0003
     """
     The net class describes a feed forward neural network
 
@@ -116,3 +120,63 @@ def test(function,inputs,outputs):
             score += 1
     return score / len(inputs) * 100
 
+#Returns data in onehot form indexed in alphabetical order
+def onehot(data):
+    categories = list(set(data))
+    for i in range(len(categories)):
+        for j in range(len(data)):
+            zeros = np.zeros(len(categories)).tolist()
+            if data[j] == categories[i]:
+                data[j] = zeros
+                data[j][i] = 1
+    return data
+
+
+
+start_time = time.time()
+pixel_types = {}
+memory = open("/Users/adenpower/Documents/Personal/Repos/AI Tests/-Hello-World-Program/memo.ry","w+")
+
+class format:
+   purple = '\033[95m'
+   cyan = '\033[96m'
+   darkcyan = '\033[36m'
+   blue = '\033[94m'
+   green = '\033[92m'
+   yellow = '\033[93m'
+   red = '\033[91m'
+   bold = '\033[1m'
+   underline = '\033[4m'
+   done = '\033[0m'
+
+
+class Intelligence:
+
+    def __init__ (self):
+        self.pixel_types = {}
+
+    def say (self,text):
+        print(format.bold + format.red + "AI:    " + format.done + "**" + text + "**")
+
+    def experience(self,data):
+        self.say("Frame Recieved")
+        self.say("Recording time")
+        time_experienced = time.time() - start_time
+        encoded = self.encode(data)
+        features = self.identify(encoded)
+        
+
+    def encode(self,data):
+        self.say("Encoding")
+        new_data = data.copy()
+        for x in range(len(data)):
+            for y in range(len(data)):
+                if not data[x,y] in pixel_types.keys():
+                    pixel_types[data[x,y]] = len(pixel_types)
+                new_data[x,y] = pixel_types[data[x,y]]
+        return new_data
+
+    def identify (self,encoded):
+        size = encoded.shape[0] * encoded.shape[1]
+        pixels = self.pixel_types.copy()
+        
